@@ -1,4 +1,5 @@
 import os
+os.environ.setdefault("RECALLIX_DB_PATH", os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "test_isolated.db"))
 import json
 from .database import (
     init_db, get_db, create_document, insert_question,

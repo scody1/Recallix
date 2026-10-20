@@ -4,11 +4,17 @@ import json
 from datetime import datetime
 from typing import Optional, List, Dict, Any
 
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "study_os.db")
+DEFAULT_DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "study_os.db")
+
+def get_db_path() -> str:
+    return os.environ.get("RECALLIX_DB_PATH") or os.environ.get("STUDY_OS_DB_PATH") or DEFAULT_DB_PATH
+
+DB_PATH = get_db_path()
 
 def get_db():
-    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
-    conn = sqlite3.connect(DB_PATH, check_same_thread=False)
+    target_path = get_db_path()
+    os.makedirs(os.path.dirname(target_path), exist_ok=True)
+    conn = sqlite3.connect(target_path, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode=WAL;")
     conn.execute("PRAGMA foreign_keys=ON;")
@@ -1852,7 +1858,7 @@ def restore_database_backup(backup_target: str) -> Dict[str, Any]:
         except Exception:
             pass
 
-        shutil.copy2(extracted_db_path, DB_PATH)
+        shutil.copy2(extracted_db_path, get_db_path())
 
         # Restore PDFs if present in bundle
         temp_uploads = os.path.join(temp_dir, "uploads")

@@ -1,4 +1,5 @@
 import os
+os.environ.setdefault("RECALLIX_DB_PATH", os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "data", "test_isolated.db"))
 import json
 from .test_generator import generate_test_suite_pdfs
 from .database import init_db, get_db, create_document, create_job, update_job, get_job, insert_question, query_questions
